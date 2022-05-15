@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>throrrle</title>
+    <style>
+        *{
+            margin:0;padding:0;
+        }
+     .box{position:relative;
+             width:1980px;
+             height: 400px; text-align:center;
+             line-height: 300px;
+             background-color: rgb(102, 91, 91);
+         }
+         div>div{
+             position:absolute;
+             top:50%;
+             left:50%;
+             transform: translate(-50%,-50%);
+             width:300px;
+             height: 300px;
+            
+            /*  background-color: rgb(26, 25, 25); */
+         }</style>
+</head>
+
+<body>
+    <div class="box"></div>
+    <button id="btn">取消</button>
+    <script>
+     let count = 0;
+    let div=document.querySelector(".box");
+     let btn=document.querySelector("#btn");
+//节流:n 秒内只运行一次，若在 n 秒内重复触发，只有一次生效
+        function throttle(func,wait,options) 
+        {
+            let timeout;
+            let old=0;
+            return function() 
+            {
+               let context=this;
+               let args=arguments;
+                let now=new Date().valueOf();
+                if(options.leading==false&&!old){
+                    old=now;
+                }
+                if(now- old >wait)
+                {  //第一次执行
+                    if(timeout){
+                    clearTimeout(timeout);
+                    timeout=null;
+                }
+                    func.apply(context,args);
+                    old=now;
+                }
+                else if(!timeout&&options.trailing!==false)
+                {//最后一次执行
+                    timeout=setTimeout(function(){
+                        old=new Date().valueOf();
+                       func.apply(context,args);
+                       timeout=null;
+                    },wait)
+                }
+            }
+        }
+
+
+     function inner(e){
+        div.innerHTML=count++;
+        console.log(e);
+    }
+ 
+    let dosome=throttle(inner, 3000,{
+        leading:true,trailing:false,
+    });
+     /* btn.onclick=function(){
+         dosome.cancel();
+     }  */
+       div.onmousemove=dosome;
+    </script>
+</body>
+</html>
